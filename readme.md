@@ -36,6 +36,9 @@ dotnet restore
 dotnet build
 ```
 
+## Screenshot
+![ScreenShot](https://github.com/myniqx/text-captcha-solver/blob/main/screenshot.png?raw=true)
+
 ## License
 
 This project is licensed under the MIT License.
