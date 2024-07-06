@@ -1,0 +1,10 @@
+﻿/bin/
+/obj/
+/data/samples/*.*
+/.vs/text-captcha-solver/FileContentIndex
+/.vs/text-captcha-solver/v17
+/Data/options.json
+*.h5
+/FodyWeavers.xml
+/FodyWeavers.xsd
+*.pfx
