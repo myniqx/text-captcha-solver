@@ -23,7 +23,7 @@ To clone and install the C# project from the GitHub repository, follow these ste
 
 1. Clone the repository by running the following command:
 ```bash 
-git clone <github_repository_link>
+git clone https://github.com/myniqx/text-captcha-solver.git
 ```
 
 2. Install the necessary dependencies by running:
@@ -38,4 +38,4 @@ dotnet build
 
 ## License
 
-This project is licensed under the MIT License. You can find the full license text "here".>
+This project is licensed under the MIT License.
