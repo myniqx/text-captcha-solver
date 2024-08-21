@@ -112,9 +112,9 @@ namespace text_captcha_solver
 		private void refresh_Click(object sender, EventArgs e)
 		{
 			var captchaCode = Captcha.GenerateCaptchaCode();
-			var captch = Captcha.GenerateCaptchaImage(200,50,captchaCode);
-			captchaBox.Image = captch;
-			var boxes = SplitBoxes(captchaBox.Image);
+			var captcha = Captcha.GenerateCaptchaImage(200,50,captchaCode);
+			captchaBox.Image = Captcha.CreateBitmapStats(captcha);
+			var boxes = SplitBoxes(captcha);
 			var pbx = new [] {c1,c2,c3,c4};
 
 			for (int i = 0; i < 4; i++)

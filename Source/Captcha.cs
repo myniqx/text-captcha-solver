@@ -1,7 +1,8 @@
-﻿
-using System;
+﻿using System;
+using System.Collections.Generic;
 using System.Drawing;
 using System.Drawing.Imaging;
+using System.Linq;
 using System.Text;
 
 using Tensorflow.NumPy;
@@ -254,6 +255,113 @@ namespace captcha_solver.Source
 			{
 				var pt = GenerateCaptchaCore(baseMap,captchaCode,random);
 				return AddRippleEffectToNDArray(pt, baseMap);
+			}
+		}
+
+		public static Bitmap CreateBitmapStats(Bitmap input)
+		{
+			var colorStats = new Dictionary<Color, ColorStats>();
+
+			for (int y = 0; y < input.Height; y++)
+			{
+				for (int x = 0; x < input.Width; x++)
+				{
+					var pixel = input.GetPixel(x, y);
+					if (!colorStats.ContainsKey(pixel))
+					{
+						colorStats[pixel] = new ColorStats
+						{
+							color = pixel
+						};
+					}
+					colorStats[pixel].Count++;
+					colorStats[pixel].widthIndex.Add(x);
+				}
+			}
+
+			var maxWidth = colorStats.Values
+				.Max(x => x.Width);
+			var bgColor = colorStats.Values.First(x => x.Width == maxWidth).color;
+			colorStats.Remove(bgColor);
+
+			var stats = colorStats.Values.ToArray();
+			Array.Sort(stats, (a, b) => b.Count.CompareTo(a.Count));
+
+			var copy = new Bitmap(input.Width, input.Height + 30);
+			//using (var g = Graphics.FromImage(copy))
+			//	g.DrawImage(input, 0, 0);
+
+			for (int i = 0; i < stats.Length; i++)
+			{
+				var stat = stats[i];
+				if (stat.Width > copy.Width / 3)
+					removeColor(stat, input, bgColor);
+				else if (stat.Count <= 150)
+					removeColor(stat, input, bgColor);
+
+			}
+
+			using (var g = Graphics.FromImage(copy))
+			{
+				g.DrawImage(input, 0, 0);
+				int h = 2;
+				int y = copy.Height - h;
+				foreach (var stat in stats)
+				{
+					g.FillRectangle(
+						new SolidBrush(stat.color),
+						stat.widthIndex.Min(),
+						y,
+						stat.Width,
+						h);
+					Console.WriteLine(stat.color + " : " + stat.Width + " : " + stat.Count);
+					y -= h;
+				}
+			}
+			return copy;
+
+		}
+
+		static bool ColorsAreEqual(Color color1, Color color2)
+		{
+			return color1.A == color2.A && color1.R == color2.R && color1.G == color2.G && color1.B == color2.B;
+		}
+
+		static void removeColor(ColorStats stats, Bitmap bmp, Color newColor)
+		{
+			var max = stats.widthIndex.Max();
+			for (int i = 0; i < bmp.Width; i++)
+			{
+				for (int j = 0; j < bmp.Height; j++)
+				{
+					Color pixel = bmp.GetPixel(i, j);
+
+					if (ColorsAreEqual(pixel, stats.color))
+					{
+						bmp.SetPixel(i, j, newColor);
+					}
+				}
+			}
+		}
+	}
+
+	public class ColorStats
+	{
+		public Color color { get; set; }
+		public int Count { get; set; }
+		public HashSet<int> widthIndex { get; set; } = new();
+
+		private int _width { get; set; } = 0;
+
+		public int Width
+		{
+			get
+			{
+				if (_width == 0)
+				{
+					_width = widthIndex.Max() - widthIndex.Min();
+				}
+				return _width;
 			}
 		}
 	}

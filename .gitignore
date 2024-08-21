@@ -8,3 +8,5 @@
 /FodyWeavers.xml
 /FodyWeavers.xsd
 *.pfx
+/.vs
+/packages

@@ -48,7 +48,7 @@ namespace text_captcha_solver.Source
 				var parts = x.Split('_');
 				var acc = int.Parse(parts[1]);
 				return acc;
-			}).First();
+			}).Last();
 		}
 
 		public static string GetLastModelFile()
